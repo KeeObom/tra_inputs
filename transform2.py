@@ -4,30 +4,25 @@ import os
 import shutil
 from io import BytesIO
 import zipfile
-# from github import Github
+from github import Github
 
 # Retrieve the GitHub personal access token
-# github_access_token = st.secrets["github"]["access_token"]
-
-# Install openpyxl in the Streamlit app's environment
-# st.subheader("Installing openpyxl...")
-# os.system("pip install openpyxl")
-# st.subheader("openpyxl installed successfully.")
+github_access_token = st.secrets["github"]["access_token"]
 
 # Initialize lists to store selected files
 lob_files = []
 reinsurance_files = []
 
-# # Define your GitHub repository credentials
-# github_username = 'KeeObom'
-# github_token = github_access_token
-# repository_name = 'lobs_reserves'
+# Define your GitHub repository credentials
+github_username = 'KeeObom'
+github_token = github_access_token
+repository_name = 'tra_inputs'
 
 # Initialize a GitHub instance with your credentials
-# g = Github(github_username, github_token)
+g = Github(github_username, github_token)
 
 # Specify the target repository
-# repo = g.get_repo(f"{github_username}/{repository_name}")
+repo = g.get_repo(f"{github_username}/{repository_name}")
 
 
 # Create a Streamlit app
@@ -118,23 +113,6 @@ if st.button("Generate All"):
                 processed_sheets[sheet_name] = merged_data
                 st.success(f"Processed {sheet_name}")
 
-            # elif sheet_name in group2_sheets:
-            #     # For group 2, duplicate the first sheet in the group and save in the processed_sheets dictionary
-            #     original_sheet = processed_sheets[first_sheet_group2]
-            #     processed_sheets[sheet_name] = original_sheet.copy()
-            #     st.success(f"Processed {sheet_name}")
-
-            # elif sheet_name in group3_sheets:
-            #     # For group 3, duplicate the first sheet in the group and save in the processed_sheets dictionary
-            #     original_sheet = processed_sheets[first_sheet_group3]
-            #     processed_sheets[sheet_name] = original_sheet.copy()
-            #     st.success(f"Processed {sheet_name}")
-
-            # elif sheet_name in group4_sheets:
-            #     # For group 4, duplicate the first sheet in the group and save in the processed_sheets dictionary
-            #     original_sheet = processed_sheets[first_sheet_group4]
-            #     processed_sheets[sheet_name] = original_sheet.copy()
-            #     st.success(f"Processed {sheet_name}")
 
             # Update the progress bar
             progress_bar.progress((total_sheets.index(sheet_name) + 1) / len(total_sheets))
@@ -159,6 +137,24 @@ if st.button("Generate All"):
         # Read the content of the generated ZIP file
         with open("processed_sheets.zip", 'rb') as zip_file:
             zip_file_content = zip_file.read()
+
+        # Upload the generated ZIP file to your GitHub repository
+        zip_contents = None
+        try:
+            zip_contents = repo.get_contents(zip_file_name)
+        except Exception as e:
+            pass
+
+        if zip_contents:
+            # If the file exists, update it with the new content and provide the SHA
+            repo.update_file(zip_file_name, f"Update {zip_file_name}", zip_file_content, zip_contents.sha, branch="main")
+        else:
+            # If the file does not exist, create it
+            repo.create_file(zip_file_name, f"Create {zip_file_name}", zip_file_content, branch="main")
+
+        # Add a link to the GitHub processed_sheets.zip file
+    processed_sheets_link = f"[Download Processed Sheets.zip](https://github.com/{github_username}/{repository_name}/blob/main/{zip_file_name})"
+    st.markdown(processed_sheets_link)
 
    
 
