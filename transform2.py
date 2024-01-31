@@ -32,8 +32,8 @@ st.title("Life File Processor")
 st.sidebar.header("File Selection")
 
 # Changed xlsb to xlsx
-lob_files = st.sidebar.file_uploader("Upload Line of Business Files", accept_multiple_files=True, type=["xlsx"])
-reinsurance_files = st.sidebar.file_uploader("Upload Reinsurance Files", accept_multiple_files=True, type=["xlsx"])
+lob_files = st.sidebar.file_uploader("Upload Line of Business Files", accept_multiple_files=True, type=["xlsx", "xlsb"])
+reinsurance_files = st.sidebar.file_uploader("Upload Reinsurance Files", accept_multiple_files=True, type=["xlsx", "xlsb"])
 
 # Display selected files
 st.sidebar.subheader("Selected Files:")
@@ -103,12 +103,27 @@ if st.button("Generate All"):
                 merged_data = pd.DataFrame()
                 for uploaded_file in all_files:
                     try:
-                        df = pd.read_excel(uploaded_file, sheet_name=sheet_name, skiprows=8)
-                        # # Replace the line below when working with xlsb files
-                        # df = pd.read_excel(uploaded_file, sheet_name=sheet_name, skiprows=8, engine='pyxlsb')
+                        file_extension = os.path.splitext(uploaded_file.name)[-1].lower()
+                
+                        if file_extension == ".xlsx":
+                            df = pd.read_excel(uploaded_file, sheet_name=sheet_name, skiprows=8)
+                        elif file_extension == ".xlsb":
+                            df = pd.read_excel(uploaded_file, sheet_name=sheet_name, skiprows=8, engine='pyxlsb')
+                        else:
+                            st.warning(f"Unsupported file format for {uploaded_file.name}. Only xlsx and xlsb files are supported.")
+                            continue
+                
                         merged_data = pd.concat([merged_data, df], ignore_index=True)
                     except Exception as e:
                         st.error(f"Error reading {sheet_name} from {uploaded_file.name}: {e}")
+                # for uploaded_file in all_files:
+                #     try:
+                #         df = pd.read_excel(uploaded_file, sheet_name=sheet_name, skiprows=8)
+                #         # # Replace the line below when working with xlsb files
+                #         # df = pd.read_excel(uploaded_file, sheet_name=sheet_name, skiprows=8, engine='pyxlsb')
+                #         merged_data = pd.concat([merged_data, df], ignore_index=True)
+                #     except Exception as e:
+                #         st.error(f"Error reading {sheet_name} from {uploaded_file.name}: {e}")
 
                 processed_sheets[sheet_name] = merged_data
                 st.success(f"Processed {sheet_name}")
@@ -158,18 +173,17 @@ if st.button("Generate All"):
 
    
 
-    # Download the ZIP file to system
-    st.download_button(
-        label="Download to System",
-        data=zip_file_content,
-        file_name="processed_sheets.zip",
-        key="download_button"
-    )
 
 # Clear selections
 if st.button("Clear Selections"):
     lob_files = []
-    reinsurance_files = st.sidebar.empty()
+    reinsurance_files = []
+    
+    # Clear the entire sidebar content
+    st.sidebar.empty()
+    
+    # Recreate file upload widgets
+    lob_files = st.sidebar.file_uploader("Upload Line of Business Files", accept_multiple_files=True, type=["xlsx"])
+    reinsurance_files = st.sidebar.file_uploader("Upload Reinsurance Files", accept_multiple_files=True, type=["xlsx"])
+
     st.success("Selections cleared.")
-
-
