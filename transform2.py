@@ -176,11 +176,6 @@ if st.button("Generate All"):
 
 # Clear selections
 if st.button("Clear Selections"):
-    # Clear the entire sidebar content
-    st.sidebar.empty()
-
-    # Recreate all widgets inside the sidebar
-    lob_files = st.sidebar.file_uploader("Upload Line of Business Files", accept_multiple_files=True, type=["xlsx", "xlsb"])
-    reinsurance_files = st.sidebar.file_uploader("Upload Reinsurance Files", accept_multiple_files=True, type=["xlsx", "xlsb"])
-
+    lob_files = st.sidebar.empty()
+    reinsurance_files = st.sidebar.empty()
     st.success("Selections cleared.")
