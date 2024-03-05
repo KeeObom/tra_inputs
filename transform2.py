@@ -125,6 +125,9 @@ if st.button("Generate All"):
                 #     except Exception as e:
                 #         st.error(f"Error reading {sheet_name} from {uploaded_file.name}: {e}")
 
+                # Fill blank spaces or NaN with 0
+                merged_data = merged_data.fillna(0)
+
                 processed_sheets[sheet_name] = merged_data
                 st.success(f"Processed {sheet_name}")
 
