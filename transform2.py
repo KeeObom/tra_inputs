@@ -72,7 +72,7 @@ if st.button("Generate All"):
            "CF_T1_PVFC_LIC_INCLAIM_LIC_INCR" , "CF_T1_PVFC_LIC_INCEXP_LIC_INCR" , "CF_T1_PVFC_LIC_CLO" , "CF_T1_ACQ_CF_LRC_OP_TADJ" ,
             "CF_T1_ACQ_CF_LRC_OP_FADJ" , "CF_T1_ACQ_CF_LRC_OP" , "CF_T1_ACQ_CF_LRC_NB" , "CF_T1_ACQ_CF_LRC_EXPCLOIF" , 
             "CF_T1_ACQ_CF_LRC_TEXPVAR" , "CF_T1_ACQ_CF_LRC_EXPCLONB" , "CF_T1_ACQ_CF_LRC_DEREC" , "CF_T1_ACQ_CF_LRC_TASSCHG" ,
-             "CF_T1_ACQ_CF_LRC_FASSCHG" , "CF_T1_ACQ_CF_LRC_CLO", "REINSURANCE"]  # first group of sheets
+             "CF_T1_ACQ_CF_LRC_FASSCHG" , "CF_T1_ACQ_CF_LRC_CLO"]  # first group of sheets
         # group2_sheets = ["CF_T1_PVFC_LIC_CLO_FADJ_PY", "CF_T1_PVFC_LIC_CLO_TADJ_PY",
         #                  "CF_T1_PVFC_LIC_DEREC","CF_T1_PVFC_LIC_EXPCLO_PY"]  # second group of sheets
         # group3_sheets = ["CF_T1_PVFC_LIC_OP", "CF_T1_PVFC_LIC_OP_FADJ_PY","CF_T1_PVFC_LIC_OP_TADJ_PY"]  # third group of sheets
