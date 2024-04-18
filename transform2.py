@@ -116,14 +116,27 @@ if st.button("Generate All"):
                         merged_data = pd.concat([merged_data, df], ignore_index=True)
                     except Exception as e:
                         st.error(f"Error reading {sheet_name} from {uploaded_file.name}: {e}")
-                # for uploaded_file in all_files:
-                #     try:
-                #         df = pd.read_excel(uploaded_file, sheet_name=sheet_name, skiprows=8)
-                #         # # Replace the line below when working with xlsb files
-                #         # df = pd.read_excel(uploaded_file, sheet_name=sheet_name, skiprows=8, engine='pyxlsb')
-                #         merged_data = pd.concat([merged_data, df], ignore_index=True)
-                #     except Exception as e:
-                #         st.error(f"Error reading {sheet_name} from {uploaded_file.name}: {e}")
+            elif sheet_name == "REINSURANCE":
+                # Check if any of the uploaded files contain the "REINSURANCE" sheet
+                reinsurance_found = any(pd.ExcelFile(file).sheet_names == "REINSURANCE" for file in all_files)
+                if reinsurance_found:
+                    # Process "REINSURANCE" sheet if found
+                    merged_data = pd.DataFrame()
+                    for uploaded_file in all_files:
+                        try:
+                            file_extension = os.path.splitext(uploaded_file.name)[-1].lower()
+                        
+                            if file_extension == ".xlsx":
+                                df = pd.read_excel(uploaded_file, sheet_name=sheet_name, skiprows=8)
+                            elif file_extension == ".xlsb":
+                                df = pd.read_excel(uploaded_file, sheet_name=sheet_name, skiprows=8, engine='pyxlsb')
+                            else:
+                                st.warning(f"Unsupported file format for {uploaded_file.name}. Only xlsx and xlsb files are supported.")
+                                continue
+                        
+                            merged_data = pd.concat([merged_data, df], ignore_index=True)
+                        except Exception as e:
+                            st.error(f"Error reading {sheet_name} from {uploaded_file.name}: {e}")
 
                 # Fill blank spaces or NaN with 0
                 merged_data = merged_data.fillna(0)
